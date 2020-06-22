@@ -1,8 +1,26 @@
+"""
+Things that could be improved:
+
+- Get pictures of the recipes in the recipe roller frame
+- Fix sizing to scale to data in ingredient and shopping lists
+- Have the application email the final shopping list to the user
+- Get a nice background picture
+- Fix links on the recipe page (they all point to the last recipe)
+- Fix ingredient and shopping lists to alternate their y values so as to counter extremely long ingredients
+- Combine preferences and second frame
+- Other aesthethic improvements?
+- Add about page.
+
+"""
+
+
+
 from tkinter import *
 from tkinter.ttk import *
 import requests
 import json
 import webbrowser
+import time
 
 from get_info import get_data
 from get_info import get_ingredients
@@ -12,17 +30,30 @@ from get_info import get_random_recipe_names
 
 class Window(Frame):
 
-    db_name = 'New User'
-    db_apikey = '74384699376e430daeedabdc69e3e48e'
-    db_numofrecipes = 0
+    #These default values take the place of user input if the input is blank.
+    default_name = 'New User'
+    default_apikey = '74384699376e430daeedabdc69e3e48e'
+    number_of_requested_recipes = 1
 
-    listofing = []
-    stateofing = []
+    #the state_of_ingredient_list shows which ingredients the user already has. 
+    #Ingredients that he DOES NOT have have a value 2 while ingredients he does have take the value 1.
+    list_of_necessary_ingredients = []
+    state_of_ingredient_list = []
 
     data = {}
     ids = []
 
     query = ''
+
+    #timemessage displays a welcoming message to the user based on the time of day.
+    t = time.localtime()
+    current_time = int(time.strftime("%H", t))
+    if current_time <= 4 or current_time >= 18:
+        timemessage = "Good evening, "
+    elif current_time >= 5 and current_time <= 11:
+        timemessage = "Good morning, "
+    else:
+        timemessage = "Good afternoon, "
 
     def __init__(self, master):
         Frame.__init__(self, master)
@@ -36,12 +67,20 @@ class Window(Frame):
         self.some_frame.pack()
 
         self.master.title("Foodie!")
+
+
+        window_width = 800
+        window_height = 600
+        root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=800, height=600)
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
         txt1 = Label(self.some_frame, text="\nWelcome to Foodie!", font=("Garamond", 35))
         canvas0.create_window(400,90, window=txt1)
+
+        spoontxt = Label(self.some_frame, text="Powered by spoonacular.com's API.", font=("Courier New", 9))
+        canvas0.create_window(3,590, window=spoontxt, anchor=W)
 
         longtext1 = 'An application that helps you explore \n   and prepare to try new recipes.'
         txt2 = Label(self.some_frame, text=longtext1, font=('Courier New', 11))
@@ -49,6 +88,9 @@ class Window(Frame):
 
         txt3 = Label(self.some_frame, text='\n\n\n\nLet\'s begin by logging in:', font=('Courier New', 11))
         canvas0.create_window(400,240, window=txt3)
+
+        txt4 = Label(self.some_frame, text='Please leave this blank unless you \nhave a spoonacular.com API key.', font=('Courier New', 8))
+        canvas0.create_window(620,360, window=txt4)
 
         nametxt = Label(self.some_frame, text='Your Name', font=('Courier New', 11))
         canvas0.create_window(285,320, window=nametxt)
@@ -62,11 +104,11 @@ class Window(Frame):
 
         def checkcreds():
             if entry1.get() != '':
-                self.db_name = entry1.get()
+                self.default_name = entry1.get()
             if entry2.get() != '':
-                self.db_apikey = entry2.get()
+                self.default_apikey = entry2.get()
 
-            link = 'https://api.spoonacular.com/recipes/635447/ingredientWidget.json?apiKey=' + self.db_apikey
+            link = 'https://api.spoonacular.com/recipes/635447/ingredientWidget.json?apiKey=' + self.default_apikey
             response = requests.get(link)
             if response.ok:
                 self.some_frame.destroy()
@@ -83,17 +125,22 @@ class Window(Frame):
     def recipe_roll(self):
         self.some_frame = Frame(self.master)
         self.some_frame.pack()
-        canvas0 = Canvas(self.some_frame, width=800, height=600)
+        
+        window_width = 800
+        window_height = 600
+        root.geometry(str(window_width) + 'x' + str(window_height))
+
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        txt1 = Label(self.some_frame, text="Good day, " + self.db_name + '.', font=("Courier New", 10))
-        canvas0.create_window(10,15, window=txt1, anchor=W)
+        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=W)
 
         longtxt2 = '         Let\'s try some new recipes this week! \nHow many random recipes would you like to try?'
         txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 20))
         canvas0.create_window(415,150, window=txt2)
 
-        longtxt3 = 'Please limit yourself to 7.'
+        longtxt3 = 'Please limit yourself to 5.'
         txt3 = Label(self.some_frame, text=longtxt3, font=("Courier New", 10))
         canvas0.create_window(415,200, window=txt3)
 
@@ -102,10 +149,12 @@ class Window(Frame):
 
         def check():
             num = entry1.get()
+            if num == '':
+                num = '1'
             try:
                 intnum = int(num)
-                assert intnum < 8
-                self.db_numofrecipes = intnum
+                assert intnum < 6 and intnum > 0
+                self.number_of_requested_recipes = intnum
                 self.some_frame.destroy()
                 self.some_frame = None
                 self.get_preferences()
@@ -120,10 +169,15 @@ class Window(Frame):
     def get_preferences(self):
         self.some_frame = Frame(self.master)
         self.some_frame.pack()
-        canvas0 = Canvas(self.some_frame, width=800, height=600)
+        
+        window_width = 800
+        window_height = 600
+        root.geometry(str(window_width) + 'x' + str(window_height))
+    
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        txt1 = Label(self.some_frame, text="Configure " + self.db_name + '\'s preferences', font=("Courier New", 10))
+        txt1 = Label(self.some_frame, text="Configure " + self.default_name + '\'s preferences', font=("Courier New", 10))
         canvas0.create_window(10,15, window=txt1, anchor=W)
 
         longtxt2 = '         Do you have any dietary restrictions? \nIf so, enter (vegetarian, vegan, gluten-free, or dairy-free)'
@@ -170,12 +224,12 @@ class Window(Frame):
                 preferences += ',sustainable'
 
             if (restrictions == '' and preferences == ''):
-                self.query = 'https://api.spoonacular.com/recipes/random?apiKey=' + self.db_apikey + '&number=' + str(self.db_numofrecipes)
+                self.query = 'https://api.spoonacular.com/recipes/random?apiKey=' + self.default_apikey + '&number=' + str(self.number_of_requested_recipes)
             else:
                 self.query = (
                     "https://api.spoonacular.com/recipes/random"
-                    + "?apiKey=" + self.db_apikey
-                    + "&number=" + str(self.db_numofrecipes)
+                    + "?apiKey=" + self.default_apikey
+                    + "&number=" + str(self.number_of_requested_recipes)
                     + "&tags=" + restrictions + ',' + preferences
                 )
 
@@ -189,10 +243,16 @@ class Window(Frame):
     def ingredient_list(self):
         self.some_frame = Frame(self.master)
         self.some_frame.pack()
-        canvas0 = Canvas(self.some_frame, width=1300, height=900)
+        
+        window_width = 1300
+        window_height = 900
+        root.geometry(str(window_width) + 'x' + str(window_height))
+    
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        root.geometry("1300x900")
+        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=W)
 
         longtxt2 = 'These are the ingredients necessary for your recipes for the week. \n                    Check the ingredients you already have.'
         txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 16))
@@ -202,7 +262,7 @@ class Window(Frame):
         self.ids = get_random_recipe_ids(self.data)
         lst = []
         for id in self.ids:
-            ingr_query = 'https://api.spoonacular.com/recipes/' + str(id) + '/ingredientWidget.json?apiKey=' + self.db_apikey
+            ingr_query = 'https://api.spoonacular.com/recipes/' + str(id) + '/ingredientWidget.json?apiKey=' + self.default_apikey
             lst += get_ingredients(ingr_query) #replace with ingredient list
 
         accx = 50
@@ -228,29 +288,39 @@ class Window(Frame):
 
             finaly = y
         
+        window_width = 1300
+        window_height = finaly + 100
+        root.geometry(str(window_width) + 'x' + str(window_height))
+        
         def gotolist():
             self.some_frame.destroy()
             self.some_frame = None
 
-            self.listofing = lst
-            stateofing = ingdict.values()
+            self.list_of_necessary_ingredients = lst
+            state_of_ingredient_list = ingdict.values()
             accum = []
-            for element in stateofing:
+            for element in state_of_ingredient_list:
                 accum.append(element.get())
-            self.stateofing = accum
+            self.state_of_ingredient_list = accum
 
             self.shopping_list()
         
         submitButton = Button(self.some_frame, text="Continue to Shopping List", style = 'W.TButton', command=gotolist)
-        canvas0.create_window(650, 820, window=submitButton)
+        canvas0.create_window(650, finaly+60, window=submitButton)
 
     def show_recipes(self):
         self.some_frame = Frame(self.master)
         self.some_frame.pack()
-        canvas0 = Canvas(self.some_frame, width=1000, height=600)
+        
+        window_width = 1300
+        window_height = 900
+        root.geometry(str(window_width) + 'x' + str(window_height))
+    
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        root.geometry("1000x1000")
+        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=W)
 
         longtxt2 = 'Here are your recipes!'
         txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 24))
@@ -289,25 +359,28 @@ class Window(Frame):
     def shopping_list(self):
         self.some_frame = Frame(self.master)
         self.some_frame.pack()
-        canvas0 = Canvas(self.some_frame, width=1300, height=900)
+        
+        window_width = 1080
+        window_height = 900
+        root.geometry(str(window_width) + 'x' + str(window_height))
+    
+        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
         txt1 = Label(self.some_frame, text='Here is your shopping list for the week. Have fun!', font=("Garamond", 20))
-        canvas0.create_window(400, 50, window=txt1)
+        canvas0.create_window(window_width/2, 50, window=txt1)
 
         accumulator = 0
-        for number in range(0, len(self.listofing)):
+        for number in range(0, len(self.list_of_necessary_ingredients)):
             if accumulator%2 == 0:
                 x = 100
             else:
-                x = 600
-            if self.stateofing[number] == 2:
-                Label(self.some_frame, text='Here is your shopping list for the week!', font=("Courier New", 13))
-                canvas0.create_window(x, 140+20*accumulator, window=Label(self.some_frame, text=self.listofing[number], font=("Courier New", 12)), anchor=W)
+                x = 480
+            if self.state_of_ingredient_list[number] == 2:
+                canvas0.create_window(x, 140+20*accumulator, window=Label(self.some_frame, text=self.list_of_necessary_ingredients[number], font=("Courier New", 12)), anchor=W)
                 accumulator += 1
-        root.geometry("1300x" + str(180+30*accumulator))
+        root.geometry("900x" + str(180+20*accumulator))
             
 root = Tk()
-root.geometry("800x600")
 app = Window(root)
 root.mainloop()
