@@ -11,6 +11,20 @@ Things that could be improved:
 - Other aesthethic improvements?
 - Add about page.
 
+from api:
+- minimum review for each recipe
+- ingredients to not include
+- preparation time for each recipe
+- price of ingredient totals of each recipe
+
+not from api:
+- where to shop for ingredients
+- internal review system
+- saving recipes for later
+- favorites
+- add your own recipe to the shopping list
+- add your own ingredients to the shopping list
+
 """
 
 
