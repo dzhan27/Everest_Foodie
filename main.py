@@ -29,8 +29,8 @@ not from api:
 
 
 
-from tkinter import *
-from tkinter.ttk import *
+import tkinter as tk
+import tkinter.ttk as ttk
 import requests
 import json
 import webbrowser
@@ -42,7 +42,7 @@ from get_info import get_random_recipe_urls
 from get_info import get_random_recipe_ids
 from get_info import get_random_recipe_names
 
-class Window(Frame):
+class Window(tk.Frame):
 
     #These default values take the place of user input if the input is blank.
     default_name = 'New User'
@@ -70,14 +70,14 @@ class Window(Frame):
         timemessage = "Good afternoon, "
 
     def __init__(self, master):
-        Frame.__init__(self, master)
+        tk.Frame.__init__(self, master)
         self.master = master
         
         self.some_frame = None
         self.init_window()
 
     def init_window(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
 
         self.master.title("Foodie!")
@@ -87,32 +87,32 @@ class Window(Frame):
         window_height = 600
         root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        txt1 = Label(self.some_frame, text="\nWelcome to Foodie!", font=("Garamond", 35))
+        txt1 = ttk.Label(self.some_frame, text="\nWelcome to Foodie!", font=("Garamond", 35))
         canvas0.create_window(400,90, window=txt1)
 
-        spoontxt = Label(self.some_frame, text="Powered by spoonacular.com's API.", font=("Courier New", 9))
-        canvas0.create_window(3,590, window=spoontxt, anchor=W)
+        spoontxt = ttk.Label(self.some_frame, text="Powered by spoonacular.com's API.", font=("Courier New", 9))
+        canvas0.create_window(3,590, window=spoontxt, anchor=tk.W)
 
         longtext1 = 'An application that helps you explore \n   and prepare to try new recipes.'
-        txt2 = Label(self.some_frame, text=longtext1, font=('Courier New', 11))
+        txt2 = ttk.Label(self.some_frame, text=longtext1, font=('Courier New', 11))
         canvas0.create_window(400,180, window=txt2)
 
-        txt3 = Label(self.some_frame, text='\n\n\n\nLet\'s begin by logging in:', font=('Courier New', 11))
+        txt3 = ttk.Label(self.some_frame, text='\n\n\n\nLet\'s begin by logging in:', font=('Courier New', 11))
         canvas0.create_window(400,240, window=txt3)
 
-        txt4 = Label(self.some_frame, text='Please leave this blank unless you \nhave a spoonacular.com API key.', font=('Courier New', 8))
+        txt4 = ttk.Label(self.some_frame, text='Please leave this blank unless you \nhave a spoonacular.com API key.', font=('Courier New', 8))
         canvas0.create_window(620,360, window=txt4)
 
-        nametxt = Label(self.some_frame, text='Your Name', font=('Courier New', 11))
+        nametxt = ttk.Label(self.some_frame, text='Your Name', font=('Courier New', 11))
         canvas0.create_window(285,320, window=nametxt)
-        apitxt = Label(self.some_frame, text='API key', font=('Courier New', 11))
+        apitxt = ttk.Label(self.some_frame, text='API key', font=('Courier New', 11))
         canvas0.create_window(290,360, window=apitxt)
         
-        entry1 = Entry(self.some_frame)
-        entry2 = Entry(self.some_frame)
+        entry1 = ttk.Entry(self.some_frame)
+        entry2 = ttk.Entry(self.some_frame)
         canvas0.create_window(410, 320, window=entry1)
         canvas0.create_window(410, 360, window=entry2)
 
@@ -129,36 +129,36 @@ class Window(Frame):
                 self.some_frame = None
                 self.recipe_roll()
             else:
-                errtxt = Label(self.some_frame, text='An error occurred with your API key. \n         Please try again.', font=('Courier New', 11))
+                errtxt = ttk.Label(self.some_frame, text='An error occurred with your API key. \n         Please try again.', font=('Courier New', 11))
                 errtxt.place(x=245, y=500)
                 canvas0.create_window(410, 500, window=errtxt)
 
-        submitButton = Button(self.some_frame, text="Let's Go!", style = 'W.TButton', command = checkcreds)
+        submitButton = ttk.Button(self.some_frame, text="Let's Go!", style = 'W.TButton', command = checkcreds)
         submitButton.place(x=365, y=430)
 
     def recipe_roll(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
         
         window_width = 800
         window_height = 600
         root.geometry(str(window_width) + 'x' + str(window_height))
 
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
-        canvas0.create_window(10,15, window=timemsg, anchor=W)
+        timemsg = ttk.Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=tk.W)
 
         longtxt2 = '         Let\'s try some new recipes this week! \nHow many random recipes would you like to try?'
-        txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 20))
+        txt2 = ttk.Label(self.some_frame, text=longtxt2, font=("Garamond", 20))
         canvas0.create_window(415,150, window=txt2)
 
         longtxt3 = 'Please limit yourself to 5.'
-        txt3 = Label(self.some_frame, text=longtxt3, font=("Courier New", 10))
+        txt3 = ttk.Label(self.some_frame, text=longtxt3, font=("Courier New", 10))
         canvas0.create_window(415,200, window=txt3)
 
-        entry1 = Entry(self.some_frame)
+        entry1 = ttk.Entry(self.some_frame)
         canvas0.create_window(400, 280, window=entry1)
 
         def check():
@@ -174,40 +174,40 @@ class Window(Frame):
                 self.get_preferences()
             except:
                 longtxt4 = 'An error occurred with your input. Please try again.'
-                txt4 = Label(self.some_frame, text=longtxt4, font=("Courier New", 10))
+                txt4 = ttk.Label(self.some_frame, text=longtxt4, font=("Courier New", 10))
                 canvas0.create_window(415,370, window=txt4)
 
-        submitButton = Button(self.some_frame, text="Roll Recipes!", style = 'W.TButton', command=check)
+        submitButton = ttk.Button(self.some_frame, text="Roll Recipes!", style = 'W.TButton', command=check)
         canvas0.create_window(400, 320, window=submitButton)
 
     def get_preferences(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
         
         window_width = 800
         window_height = 600
         root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        txt1 = Label(self.some_frame, text="Configure " + self.default_name + '\'s preferences', font=("Courier New", 10))
-        canvas0.create_window(10,15, window=txt1, anchor=W)
+        txt1 = ttk.Label(self.some_frame, text="Configure " + self.default_name + '\'s preferences', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=txt1, anchor=tk.W)
 
         longtxt2 = '         Do you have any dietary restrictions? \nIf so, enter (vegetarian, vegan, gluten-free, or dairy-free)'
-        txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 20))
+        txt2 = ttk.Label(self.some_frame, text=longtxt2, font=("Garamond", 20))
         canvas0.create_window(415, 150, window=txt2)
 
-        entry1 = Entry(self.some_frame)
+        entry1 = ttk.Entry(self.some_frame)
         canvas0.create_window(400, 210, window=entry1)
 
         self.dietary_restriction = entry1.get()
 
         longtxt3 = '         Do you have any other preferences? \nIf so, enter (healthy, cheap, sustainable, or popular)'
-        txt3 = Label(self.some_frame, text=longtxt3, font=("Garamond", 20))
+        txt3 = ttk.Label(self.some_frame, text=longtxt3, font=("Garamond", 20))
         canvas0.create_window(415, 280, window=txt3)
 
-        entry2 = Entry(self.some_frame)
+        entry2 = ttk.Entry(self.some_frame)
         canvas0.create_window(400, 340, window=entry2)
 
         self.other_preference = entry2.get()
@@ -251,25 +251,25 @@ class Window(Frame):
             self.some_frame = None
             self.show_recipes()
 
-        submitButton = Button(self.some_frame, text="Submit!", style = 'W.TButton', command = query)
+        submitButton = ttk.Button(self.some_frame, text="Submit!", style = 'W.TButton', command = query)
         canvas0.create_window(400, 380, window=submitButton)
 
     def ingredient_list(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
         
         window_width = 1300
         window_height = 900
         root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
-        canvas0.create_window(10,15, window=timemsg, anchor=W)
+        timemsg = ttk.Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=tk.W)
 
         longtxt2 = 'These are the ingredients necessary for your recipes for the week. \n                    Check the ingredients you already have.'
-        txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 16))
+        txt2 = ttk.Label(self.some_frame, text=longtxt2, font=("Garamond", 16))
         canvas0.create_window(650,40, window=txt2)
 
         self.data = get_data(self.query)
@@ -284,7 +284,7 @@ class Window(Frame):
         finaly = 0
         ingdict = {}
         for number in range(0,len(lst)):
-            ingdict[number] = IntVar()
+            ingdict[number] = tk.IntVar()
             ingdict[number].set(2)
             if number%3==0:
                 x = accx
@@ -294,11 +294,11 @@ class Window(Frame):
                 x = accx + 840
             y = accy + (number//3)*30
 
-            ingrcheck = Checkbutton(self.some_frame, text='', variable=ingdict[number])
+            ingrcheck = tk.Checkbutton(self.some_frame, text='', variable=ingdict[number])
             canvas0.create_window(x,y, window=ingrcheck)
 
-            txt1 = Label(self.some_frame, text=lst[number], font=("Courier New", 13))
-            canvas0.create_window(x+20,y, window=txt1, anchor=W)
+            txt1 = ttk.Label(self.some_frame, text=lst[number], font=("Courier New", 13))
+            canvas0.create_window(x+20,y, window=txt1, anchor=tk.W)
 
             finaly = y
         
@@ -319,25 +319,25 @@ class Window(Frame):
 
             self.shopping_list()
         
-        submitButton = Button(self.some_frame, text="Continue to Shopping List", style = 'W.TButton', command=gotolist)
+        submitButton = ttk.Button(self.some_frame, text="Continue to Shopping List", style = 'W.TButton', command=gotolist)
         canvas0.create_window(650, finaly+60, window=submitButton)
 
     def show_recipes(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
         
         window_width = 1300
         window_height = 900
         root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        timemsg = Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
-        canvas0.create_window(10,15, window=timemsg, anchor=W)
+        timemsg = ttk.Label(self.some_frame, text=self.timemessage + self.default_name + '.', font=("Courier New", 10))
+        canvas0.create_window(10,15, window=timemsg, anchor=tk.W)
 
         longtxt2 = 'Here are your recipes!'
-        txt2 = Label(self.some_frame, text=longtxt2, font=("Garamond", 24))
+        txt2 = ttk.Label(self.some_frame, text=longtxt2, font=("Garamond", 24))
         canvas0.create_window(400,80, window=txt2)
 
         self.data = get_data(self.query) # delete later
@@ -350,13 +350,13 @@ class Window(Frame):
         listoftext = [0,0,0,0,0,0,0]
         for number in range(0,len(lst)):
             y = accy + 60*number
-            canvas0.create_window(accx,y, window=Label(self.some_frame, text=names[number], font=("Courier New", 14)), anchor=W)
+            canvas0.create_window(accx,y, window=ttk.Label(self.some_frame, text=names[number], font=("Courier New", 14)), anchor=tk.W)
 
             def callback(url):
                 webbrowser.open_new(url)
 
-            listoftext[number] = Label(root, text="See the recipe!", foreground="blue", cursor="hand2")
-            canvas0.create_window(accx,y+20, window=listoftext[number], anchor=W)
+            listoftext[number] = ttk.Label(root, text="See the recipe!", foreground="blue", cursor="hand2")
+            canvas0.create_window(accx,y+20, window=listoftext[number], anchor=tk.W)
             listoftext[number].bind("<Button-1>", lambda e: callback(lst[number]))
 
             finaly = y
@@ -367,21 +367,21 @@ class Window(Frame):
             self.ingredient_list()
 
         root.geometry("800x" + str(finaly+140))
-        submitButton = Button(self.some_frame, text="Continue to Ingredient List", style = 'W.TButton', command=gotoing)
+        submitButton = ttk.Button(self.some_frame, text="Continue to Ingredient List", style = 'W.TButton', command=gotoing)
         canvas0.create_window(400, finaly+80, window=submitButton)
     
     def shopping_list(self):
-        self.some_frame = Frame(self.master)
+        self.some_frame = tk.Frame(self.master)
         self.some_frame.pack()
         
         window_width = 1080
         window_height = 900
         root.geometry(str(window_width) + 'x' + str(window_height))
     
-        canvas0 = Canvas(self.some_frame, width=window_width, height=window_height)
+        canvas0 = tk.Canvas(self.some_frame, width=window_width, height=window_height)
         canvas0.pack()
 
-        txt1 = Label(self.some_frame, text='Here is your shopping list for the week. Have fun!', font=("Garamond", 20))
+        txt1 = ttk.Label(self.some_frame, text='Here is your shopping list for the week. Have fun!', font=("Garamond", 20))
         canvas0.create_window(window_width/2, 50, window=txt1)
 
         accumulator = 0
@@ -391,10 +391,10 @@ class Window(Frame):
             else:
                 x = 480
             if self.state_of_ingredient_list[number] == 2:
-                canvas0.create_window(x, 140+20*accumulator, window=Label(self.some_frame, text=self.list_of_necessary_ingredients[number], font=("Courier New", 12)), anchor=W)
+                canvas0.create_window(x, 140+20*accumulator, window=ttk.Label(self.some_frame, text=self.list_of_necessary_ingredients[number], font=("Courier New", 12)), anchor=tk.W)
                 accumulator += 1
         root.geometry("900x" + str(180+20*accumulator))
             
-root = Tk()
+root = tk.Tk()
 app = Window(root)
 root.mainloop()
